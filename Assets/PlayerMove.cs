@@ -13,6 +13,7 @@ public class PlayerMove : MonoBehaviour
     Vector3Int PositionChanger;
     [SerializeField] Tile PlayerAvatar;
     [SerializeField] Tile GroundAvatar;
+    [SerializeField] Sprite Obstacle;
     [SerializeField] Sprite AvailableGround;
     [SerializeField] Sprite FoodGround;
     [SerializeField] float TimeInterval;
@@ -28,6 +29,7 @@ public class PlayerMove : MonoBehaviour
         transform.localPosition = PlayGround.CellToLocal(PlayerPosition);
         PlayMap.SetTile(PlayerPosition, PlayerAvatar);
         MoveTimeStamp = Time.time;
+        PositionChanger = new Vector3Int(0,1,0);
     }
 
     // Update is called once per frame
@@ -67,7 +69,7 @@ public class PlayerMove : MonoBehaviour
             PlayMap.SetTile(PlayerBody[PlayerBody.Length-1], PlayerAvatar);
             MoveTimeStamp = Time.time;
         }
-        if (NextTile.Equals(FoodGround) && Time.time - MoveTimeStamp > TimeInterval)
+        else if (NextTile.Equals(FoodGround) && Time.time - MoveTimeStamp > TimeInterval)
         {
             PlayMap.SetTile(NewPosition, GroundAvatar);
             PlayMap.SetTile(PlayerBody[0], GroundAvatar);
@@ -87,7 +89,11 @@ public class PlayerMove : MonoBehaviour
             MoveTimeStamp = Time.time;
             Game.GenerateFood();
         }
-        else
+        else if (NextTile.Equals(Obstacle) && Time.time - MoveTimeStamp > TimeInterval)
+        {
+            Game.endGame();
+        }
+        else 
         {
             transform.localPosition = PlayGround.CellToLocal(PlayerPosition) * Time.deltaTime;
         }
